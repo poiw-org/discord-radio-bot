@@ -1,5 +1,4 @@
 const Eris = require('eris');
-const IceParser = require('./IceParser');
 const config = require('../config.json');
 
 // print logo
@@ -29,35 +28,14 @@ client.once("ready", () => {
 
   // connect to channel
   channel.join().then(connection => {
+    play(connection)
+    connection.on("end", ()=>play(connection))
+  })
 
-    // start ice parser
-    let radio = new IceParser(config.radio.stream);
-    console.log(`[Info]`, `Awaiting data...`);
-
-    // apply title data
-    radio.on('title', title => {
-      console.log(`[Info]`, `Now playing: ${title}`);
-      client.editStatus("online", { name: title, type: 2 })
-    });
-
-    // play stream data
-    radio.on('stream', stream => {
-      // start stream and set volume
-      connection.play(stream, { inlineVolume: true });
-      connection.setVolume(config.radio.volume / 100);
-    });
-
-    // warn user if stream does not support icecast
-    radio.on('empty', () => {
-      console.log(`[Warning]`, `Stream does not support Icecast. Stream title will not be shown.`);
-
-      client.editStatus("online", { name: 'Music', type: 2 })
-
-      connection.play(config.radio.stream, { inlineVolume: true });
-      connection.setVolume(config.radio.volume / 100);
-    });
-
-    // display errors
-    radio.on('error', err => console.error(`[Error]`, `Failed to read stream: ${err}`));
-  });
 });
+
+const play = connection =>{
+  connection.play('./file.mp3', { inlineVolume: true });
+  connection.setVolume(config.radio.volume / 100);
+  return connection;
+}
