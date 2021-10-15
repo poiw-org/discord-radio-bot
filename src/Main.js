@@ -13,7 +13,7 @@ const client = new Eris.Client(config.discord.token);
 client.connect();
 
 // register err event listener
-client.on("error", err => console.error(`[Error]`, `Unexpected error: ${err}`));
+client.on("error", err =>  process.exit(1));
 
 // register ready event listener
 client.once("ready", () => {
@@ -43,21 +43,18 @@ client.once("ready", () => {
     // play stream data
     radio.on('stream', stream => {
       // start stream and set volume
-      connection.play(stream, { inlineVolume: true });
-      connection.setVolume(config.radio.volume / 100);
+      connection.play(stream, { 
+        // inlineVolume: false,
+        // // format: "webm",
+        // samplingRate: 20000
+      });
     });
 
-    // warn user if stream does not support icecast
-    radio.on('empty', () => {
-      console.log(`[Warning]`, `Stream does not support Icecast. Stream title will not be shown.`);
-
-      client.editStatus("online", { name: 'Music', type: 2 })
-
-      connection.play(config.radio.stream, { inlineVolume: true });
-      connection.setVolume(config.radio.volume / 100);
-    });
 
     // display errors
-    radio.on('error', err => console.error(`[Error]`, `Failed to read stream: ${err}`));
+    radio.on('error', err => process.exit(1));
+    radio.on('end', err => process.exit(1));
+    radio.on('disconnect', err => process.exit(1));
+
   });
 });

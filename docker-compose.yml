@@ -3,13 +3,3 @@ services:
   web:
     build: .
     restart: always
-    ports:
-      - "1812:1812"
-    environment:
-        port: 1812
-        address: 192.168.1.8
-        domain: poiw.eu.auth0.com
-        secret: testing123
-        client_id: Toyl9iQdCu6V6ZMvkcqRaadt1cUncRb5
-        client_secret: BWxIM3FBU1GaTIw5_fCNpzXev8Sk9u16tgqotpzDSC_sao7uetDEx4le2AcFtk50
-        connection: poiw
